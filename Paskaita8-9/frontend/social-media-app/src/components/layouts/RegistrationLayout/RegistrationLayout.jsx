@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { signUpRequest } from '../../../api-calls/auth';
 
 export default function RegistrationLayout() {
@@ -9,10 +10,10 @@ export default function RegistrationLayout() {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState(null);
 
+  const navigate = useNavigate();
+
   function registrationUpdateHeading() {
-    if (isRegistrationSuccessful === true) {
-      return <h1>Registration Successful</h1>;
-    } else if (isRegistrationSuccessful === false) {
+    if (isRegistrationSuccessful === false) {
       return <h1>Registration failed</h1>;
     }
   }
@@ -35,6 +36,8 @@ export default function RegistrationLayout() {
       setEmail('');
       setDateOfBirth('');
       setPassword('');
+
+      navigate('/auth/signin');
     }
 
     setIsRegistrationSuccessful(signupResponse);
@@ -77,6 +80,8 @@ export default function RegistrationLayout() {
       />
       <br />
       <button type="submit">Register</button>
+      <br />
+      <Link to="/auth/signin">SignIn Instead</Link>
       {registrationUpdateHeading()}
     </form>
   );
