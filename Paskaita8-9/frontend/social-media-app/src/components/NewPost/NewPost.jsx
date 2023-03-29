@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import { createNewPost } from '../../api-calls/posts';
 
-export default function NewPost() {
+export default function NewPost({ setPosts }) {
   const [postBody, setPostBody] = useState('');
 
   async function submitHandler(e) {
     e.preventDefault();
-    console.log(localStorage.getItem('loggedInUser'));
-    await createNewPost({ body: postBody, userId: localStorage.getItem('loggedInUser') });
+    const newPost = await createNewPost({
+      body: postBody,
+      userId: localStorage.getItem('loggedInUser'),
+    });
+
+    if (newPost) {
+      console.log(newPost);
+      setPosts((prev) => {
+        const clone = JSON.parse(JSON.stringify(prev));
+        clone.push(newPost);
+        return clone;
+      });
+    }
     setPostBody('');
   }
 
