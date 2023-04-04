@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './Header.module.css';
 import { Link, Outlet } from 'react-router-dom';
+import Modal from '../Modal/Modal';
+import SignInForm from '../SignInForm/SignInForm';
+import SignUpForm from '../SignUpForm/SignUpForm';
 
 export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [formPicker, setFormPicker] = useState('');
+
+  function signInButtonHandler() {
+    setFormPicker('signIn');
+    setIsOpen(true);
+  }
+
+  function signUpButtonHandler() {
+    setFormPicker('signUp');
+    setIsOpen(true);
+  }
+
+  function getForm() {
+    if (formPicker === 'signIn') {
+      return <SignInForm />;
+    } else if (formPicker === 'signUp') {
+      return <SignUpForm />;
+    }
+  }
+
   return (
     <>
       <header className={styles.header}>
@@ -10,10 +34,13 @@ export default function Header() {
         <nav>
           <Link to="/">Home</Link>
           <Link to="/about">About</Link>
-          <button>Sign In</button>
-          <button>Sign Up</button>
+          <button onClick={signInButtonHandler}>Sign In</button>
+          <button onClick={signUpButtonHandler}>Sign Up</button>
         </nav>
       </header>
+      <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
+        {getForm()}
+      </Modal>
       <Outlet />
     </>
   );
