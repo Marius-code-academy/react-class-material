@@ -36,9 +36,39 @@ export async function login(req, res) {
     }
     const token = jwt.sign({ id: user.id }, process.env.JWT_SALT, { expiresIn: '1h' });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, permissions: user.permissions });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function addPermissions(req, res) {
+  try {
+    const { permissions } = req.body;
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    user.permissions = permissions;
+    await user.save();
+
+    res.status(200).json({ message: 'Permissions added successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+export async function writeStuff(req, res) {
+  try {
+    const id = req.userId;
+    const user = await User.findById(id);
+    if (user.permissions.includes('write')) {
+      res.status(200).json({ message: 'added stuff to the database' });
+    } else {
+      res.status(403).json({ error: 'User does not have permissions to write' });
+    }
+  } catch (error) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
